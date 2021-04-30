@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>CPU 목차 - Linux CPU and Power</title>
+        <title>Supend To RAM - Linux CPU and Power</title>
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -36,17 +36,17 @@
                             <li class="navitem">
                                 <a href="../.." class="nav-link">홈</a>
                             </li>
-                            <li class="dropdown active">
+                            <li class="dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">CPU <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
 <li>
-    <a href="./" class="dropdown-item active">CPU 목차</a>
+    <a href="../../01_CPU/01_01_cpu_index/" class="dropdown-item">CPU 목차</a>
 </li>
                                 </ul>
                             </li>
-                            <li class="navitem">
-                                <a href="../../06_S2R/06_01_System_Sleep_States/" class="nav-link">Supend To RAM</a>
+                            <li class="navitem active">
+                                <a href="./" class="nav-link">Supend To RAM</a>
                             </li>
                         </ul>
 
@@ -57,12 +57,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../.." class="nav-link">
+                                <a rel="prev" href="../../01_CPU/01_01_cpu_index/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../../06_S2R/06_01_System_Sleep_States/" class="nav-link">
+                                <a rel="next" class="nav-link disabled">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -84,7 +84,7 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-level="1"><a href="#cpu" class="nav-link">CPU</a>
+            <li class="nav-item" data-level="1"><a href="#system-sleep-states" class="nav-link">System Sleep States</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -93,8 +93,16 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="cpu">CPU</h1>
-<p>본 페이지는 CPU Management 관련 문서의 목차 페이지입니다.</p></div>
+<h1 id="system-sleep-states">System Sleep States</h1>
+<p>Linux kernel에서는 4가지의 system sleep states를 제공합니다. sleep states는 low power states를 의미합니다.</p>
+<ul>
+<li>Suspend-to-Idle</li>
+<li>Standby</li>
+<li>Suspend-to-RAM</li>
+<li>Hibernation</li>
+</ul>
+<p>https://www.kernel.org/doc/html/v4.14/admin-guide/pm/sleep-states.html</p>
+<p>cf) Working-State Power Management는 DVFS 챕터에 해당합니다.</p></div>
             </div>
         </div>
 
