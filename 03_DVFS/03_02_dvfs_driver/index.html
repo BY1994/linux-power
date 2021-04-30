@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>03 02 dvfs driver - Linux CPU and Power</title>
+        <title>DVFS framework - Linux CPU and Power</title>
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
@@ -45,6 +45,19 @@
 </li>
                                 </ul>
                             </li>
+                            <li class="dropdown active">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">DVFS <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../03_01_dvfs_index/" class="dropdown-item">DVFS 목차</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active">DVFS framework</a>
+</li>
+                                </ul>
+                            </li>
                             <li class="navitem">
                                 <a href="../../06_S2R/06_01_System_Sleep_States/" class="nav-link">Supend To RAM</a>
                             </li>
@@ -56,6 +69,16 @@
                                 <i class="fa fa-search"></i> Search
                             </a>
                         </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../03_01_dvfs_index/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../../06_S2R/06_01_System_Sleep_States/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
                     </ul>
                 </div>
             </div>
@@ -74,19 +97,100 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
         <ul class="nav flex-column">
             
+            <li class="nav-item" data-level="1"><a href="#dvfs" class="nav-link">DVFS</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
         </ul>
     </div>
 </div></div>
                     <div class="col-md-9" role="main">
 
-<p>Linux kernel에서는 cpufreq와 devfreq 를 제공합니다.</p>
-<p>cpufreq를 이용해서 frequency scaling을 할 수 있습니다.</p>
+<h1 id="dvfs">DVFS</h1>
 <h3 id="dynamic-voltage-frequency-scaling">Dynamic Voltage Frequency Scaling</h3>
 <blockquote>
 <p>Dynamic Voltage Frequency Scaling is enabled by default, so the CPU frequency and voltages of a running system will adapt to the system's load. The DVFS subsystem is controlled through the <strong>/sys/devices/system/cpu/cpu*N*/cpufreq/</strong> sysfs path, where <em>N</em> corresponds to the core number:</p>
 </blockquote>
 <p>https://www.digi.com/resources/documentation/digidocs/90001546/reference/bsp/v4-1_cc6/r_power_management.htm?TocPath=Digi%20Embedded%20Yocto%7CSystem%20development%7CLinux%20Board%20Support%20Package%7CDevices%20and%20interfaces%7C_____14</p>
-<p>Linux 공식 문서에 CPU Performance Scaling은 Working-State Power Management로 분류되어있다.</p></div>
+<p>Dynamic frequency scaling은 CPU throttling이라고도 합니다.</p>
+<p>[출처] https://en.wikipedia.org/wiki/Dynamic_frequency_scaling</p>
+<p>Linux 공식 문서에 CPU Performance Scaling은 Working-State Power Management로 분류되어있습니다.</p>
+<h3 id="linux-cpufreq-framework">Linux CPUFreq Framework</h3>
+<p>Linux에서 CPU Performance Scaling은 CPUFreq (CPU Frequency scaling) 코드를 통해 이루어집니다.</p>
+<p>CPUFreq는 3가지 layer로 이루어져있습니다.</p>
+<ul>
+<li>CPUFreq core: 다른 component들이 동작하는 기본적인 framework 부분입니다. 공통적인 구조를 제공합니다.</li>
+<li>Scaling governor: CPU capacity를 추정하는데 사용되는 알고리즘을 실행합니다.</li>
+<li>Scaling drivers: scaling governor에게 요청받은 CPU 상태 변경을 위하여 hardware 에 접근하는 부분입니다.</li>
+</ul>
+<h3 id="scaling-governor">Scaling governor</h3>
+<ul>
+<li>performance: scaling_max_freq나 scaling_min_freq 제한이 변경될 때만 governor가 설정되며, 가장 높은 frequency로 설정됩니다.</li>
+<li>powersave: 위와 반대로 lowest frequency 로 설정됩니다.</li>
+<li>userspace: governor가 직접 동작하지는 않고 user space에서 scaling_setspeed를 설정하면 CPU frequency가 설정됩니다.</li>
+<li>
+<p>schedutil: CPU scheduler를 통해서 얻은 CPU utilization 정보를 사용합니다. scheduling class 에 따라 frequency를 올릴 것인지 내릴 것인지가 결정됩니다.</p>
+</li>
+<li>
+<p>ondemand: CPU load 값으로 CPU frequency를 결정합니다. CPU load는 전체 CPU time 중에 active time (non-idle) 이었던 비율로 계산됩니다. CPU load가 올라가면 Cpu frequency를 올립니다. CPU load가 1이면 (100%) cpuinfo_max_freq 값으로 설정되고, 0 이면 (0%) cpuinfo_min_freq 값으로 설정됩니다. 또한  speedup threshold를 정해두면, 그것을 넘으면 max cpu frequency로 설정됩니다.</p>
+</li>
+<li>conservative: 이것도 ondemand governor 처럼 CPU load를 계산합니다. 그러나 이것은 threshold를 넘었는지 안 넘었는지에 따라 상대적으로 조금씩 frequency를 변화시킵니다.</li>
+</ul>
+<p>[출처] https://www.kernel.org/doc/html/v4.14/admin-guide/pm/cpufreq.html</p>
+<h3 id="sysfs-command">sysfs command</h3>
+<p>cpufreq 관련 가능한 sysfs 전체</p>
+<pre><code class="language-shell"># ls /sys/devices/system/cpu/cpu0/cpufreq/
+affected_cpus                  related_cpus                   scaling_governor
+cpuinfo_cur_freq               scaling_available_frequencies  scaling_max_freq
+cpuinfo_max_freq               scaling_available_governors    scaling_min_freq
+cpuinfo_min_freq               scaling_cur_freq               scaling_setspeed
+cpuinfo_transition_latency     scaling_driver                 stats
+</code></pre>
+<p>currnet operating frequency 확인</p>
+<pre><code class="language-shell"># cat /sys/devices/system/cpu/cpu4/cpufreq/scaling_cur_freq
+1150000
+</code></pre>
+<p>설정 가능한 frequency 값들 확인</p>
+<pre><code class="language-shell"># cat /sys/devices/system/cpu/cpu4/cpufreq/scaling_available_frequencies
+600000 900000 1150000
+</code></pre>
+<p>설정 가능한 governor들 확인</p>
+<pre><code class="language-shell"># cat /sys/devices/system/cpu/cpu4/cpufreq/scaling_available_governors
+ondemand userspace interactive performance
+</code></pre>
+<p>governor 선택</p>
+<pre><code class="language-shell"># echo userspace &gt; /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor
+</code></pre>
+<p>[출처] https://www.digi.com/resources/documentation/digidocs/90001546/reference/bsp/v4-1_cc6/r_power_management.htm?TocPath=Digi%20Embedded%20Yocto%7CSystem%20development%7CLinux%20Board%20Support%20Package%7CDevices%20and%20interfaces%7C_____14</p>
+<p>[출처] https://community.arm.com/developer/tools-software/oss-platforms/w/docs/528/cpufreq-dvfs</p>
+<h3 id="kernel-build-governor">Kernel Build 시 Governor 선택</h3>
+<p>Default governor is "performance". The default governor can be changed through 'menuconfig'.</p>
+<p>Multiple governors can be built and exist in the kernel by selecting them through "menuconfig".</p>
+<pre><code>Select the governors you want to build in to kernel.
+ CPU Power management options ---&gt;
+  [*] CPU frequency scaling
+    Default CPUFreq governor (performance)  ---&gt;
+  [*] performance
+  [*] userspace
+  [*] ondemand
+  [] conservative
+</code></pre>
+<p><strong>[출처]</strong> <a href="http://blog.naver.com/framkang/220393909546">DVFS (Dynamic Voltage and Frequency scaling) Disabler</a>|<strong>작성자</strong> <a href="http://blog.naver.com/framkang">에프램 EFRAM</a></p>
+<p>[출처] https://wiki.somlabs.com/index.php/How_to_scale_CPU_frequency_with_DVFS_framework</p>
+<h3 id="voltage-scaling">Voltage Scaling</h3>
+<blockquote>
+<p>The voltage layer consists of the information of all voltage domains in the system and configures all vdds during voltage layer initialization. When a vdd is configured a regulator supply handle is acquired and stored in the corresponding vdd structure.The regulators scale/set voltage function is plugged in to the vdd's voltage scale function pointer. Thus when a voltage change is requested forwarded to a vdd. The voltage layer requests the regulator framework to change the device voltage to the target voltage. Regluator driver verifies if the target voltage is in with in the limits of the voltage domain and regulator supply constraints. If all the checks go through then regulator changes the voltage of the requested device to the target voltage.</p>
+<p><strong>[출처]</strong> <a href="http://blog.naver.com/framkang/220393909546">DVFS (Dynamic Voltage and Frequency scaling) Disabler</a>|<strong>작성자</strong> <a href="http://blog.naver.com/framkang">에프램 EFRAM</a></p>
+</blockquote>
+<h3 id="note">Note</h3>
+<p>Linux 공식문서에서 나오는 CPU라는 용어는 logical CPU를 의미합니다. processor 라는 용어를 사용할 때만 logical CPU들을 포함하는 물리적인 의미로 사용할 수 있습니다. logical CPU는 processor 안에 core를 의미하거나 hardware thread를 의미합니다.</p>
+<blockquote>
+<p>Note that the logical CPU may be a physical single-core processor, or a single core in a multicore processor, or a hardware thread in a physical processor or processor core. In what follows “CPU” always means “logical CPU” unless explicitly stated otherwise and the word “processor” is used to refer to the physical part possibly including multiple logical CPUs.</p>
+<p>[출처] https://www.kernel.org/doc/html/v4.14/admin-guide/pm/cpufreq.html</p>
+</blockquote>
+<h3 id="cf-devfreq">cf) DEVFREQ</h3>
+<h3 id="cf-pm-qos">cf) PM QoS</h3>
+<p>https://events.static.linuxfound.org/images/stories/pdf/lcjp2012_ham.pdf</p></div>
             </div>
         </div>
 
