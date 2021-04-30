@@ -4,4 +4,7 @@ pages:
   - 홈: index.md
   - CPU:
     - 'CPU 목차' : '01_CPU/01_01_cpu_index.md'
+  - DVFS:
+    - 'DVFS 목차' : '03_DVFS/03_01_dvfs_index.md'
+    - 'DVFS framework' : '03_DVFS/03_02_dvfs_driver.md'
   - 'Supend To RAM' :  '06_S2R/06_01_System_Sleep_States.md'
