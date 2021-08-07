@@ -99,6 +99,18 @@
             
             <li class="nav-item" data-level="1"><a href="#welcome-to-linux-power-management-guide-document" class="nav-link">Welcome to Linux Power Management Guide Document</a>
               <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#power-management" class="nav-link">Power Management 가 중요한 이유?</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#static-power-management" class="nav-link">Static Power Management</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#dynamic-power-management" class="nav-link">Dynamic Power Management</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
             <li class="nav-item" data-level="2"><a href="#tbd" class="nav-link">TBD</a>
               <ul class="nav flex-column">
               </ul>
@@ -111,12 +123,36 @@
                     <div class="col-md-9" role="main">
 
 <h1 id="welcome-to-linux-power-management-guide-document">Welcome to Linux Power Management Guide Document</h1>
+<h2 id="power-management">Power Management 가 중요한 이유?</h2>
+<p>많은 제품들이 유선 전원 공급 장치가 아닌 배터리로 전원이 공급됩니다. 따라서 배터리에 저장된 에너지를 효율적으로 사용하는 것이 중요합니다. (배터리 에너지를 효율적으로 사용할수록 배터리 충전당 제품의 사용 가능 시간이 증가합니다)</p>
+<p>에너지를 효율적으로 사용하기 위한 방법 (Power savings) 을 크게 두 가지로 나눠볼 수 있습니다.[^1] 첫번째는 <strong>정적 전원 관리 (Static Power Management)</strong> 로 제품이 비활성화 (inactive) 상태일 때나 사용자가 스위치 입력 등으로 선택한 경우 저전력 시스템 상태 (Low-power system states) 로 전환하는 것입니다. </p>
+<p>두번째는 <strong>동적 전원 관리 (Dynamic Power Management)</strong> 로 제품이 사용 중일 때 사용자 애플리케이션 등을 실행하여 전원을 관리하는 것입니다. 이러한 전원 관리에는 CPU 주파수 &amp; 전압 조정이나 주변 장치의 클럭 및 전원 제어 등이 포함됩니다.</p>
+<p>Power consumption 중 Static 과 Dynamic 을 표현할 수 있는 그림 추가 (TBD)</p>
+<p><img alt="img" src="https://blog.kakaocdn.net/dn/dyT4fG/btqAKwiBHMx/LVzDKPXvne34DtsVaPoqMK/img.png" /></p>
+<h2 id="static-power-management">Static Power Management</h2>
+<p>정적 전원 관리는 일부 또는 모든 시스템 구성 요소의 전원을 꺼서 저전력 시스템 상태로 진입시킵니다. Linux 에서는 다음과 같은 저전력 시스템 상태 (Low-power system states) 혹은 시스템 절전 상태 (System Sleep States) 를 지원합니다. [^2]</p>
 <ul>
-<li>TBD</li>
+<li>Suspend-to-Idle</li>
+<li>Stanby</li>
+<li>Suspend-to-RAM</li>
+<li>Hibernation</li>
 </ul>
+<p>자세한 내용은 Static Power Management 장을 참조하시면 됩니다. (TBD)</p>
+<p>ACPI 내용 추가 (TBD)</p>
+<h2 id="dynamic-power-management">Dynamic Power Management</h2>
+<ul>
+<li>CPU frequency Scaling</li>
+<li>Dynamic Thermal Management</li>
+</ul>
+<p>cpu thermal sensor http://digimonxmod.blogspot.com/2008/04/motherboard-repair-replace-cpu-thermal.html</p>
+<p>등 추가 (TBD)</p>
+<p><img alt="큰 버전으로 보려면 이미지를 클릭합니다.  이름:   sensor-layout.jpg 조회수:  1 크기:   60.8 KB ID: 8406" src="https://rog.asus.com/forum/attachment.php?s=9ab4511db4e7196a5b12ac849e2b3db0&amp;attachmentid=8406&amp;d=1336333530&amp;thumb=1" /></p>
 <h2 id="tbd">TBD</h2>
 <pre><code>TBD
-</code></pre></div>
+</code></pre>
+<p>참고 자료</p>
+<p>[^1]: Power Management Specification: https://elinux.org/Dynamic_Power_Management_Specification
+[^2 ]: Linux System Sleep States: https://www.kernel.org/doc/html/latest/admin-guide/pm/sleep-states.html</p></div>
             </div>
         </div>
 
@@ -200,5 +236,5 @@
 
 <!--
 MkDocs version : 1.1.2
-Build Date UTC : 2021-04-30 16:24:42.352139+00:00
+Build Date UTC : 2021-08-07 13:32:24.499490+00:00
 -->
