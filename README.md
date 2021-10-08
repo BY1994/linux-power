@@ -18,6 +18,7 @@ http://dynamicpower.sourceforge.net/
 CPU
 
 - CPU Frequency: https://www.kernel.org/doc/html/latest/cpu-freq/index.html
+- CPU hotplug: https://www.kernel.org/doc/html/latest/core-api/cpu_hotplug.html
 
 Clock
 
