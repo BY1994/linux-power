@@ -21,7 +21,7 @@ cf) Working-State Power Management는 DVFS 챕터에 해당합니다.
 
 ACPI 공식 문서: https://uefi.org/sites/default/files/resources/ACPI_5_1release.pdf
 
-![image-20210707232909557](https://github.com/BY1994/TIL/raw/main/Daily/images/210707_ACPI_sleeping_level.png)
+![210707_ACPI_sleeping_level.png](https://github.com/BY1994/TIL/blob/main/Daily/2021/images/210707_ACPI_sleeping_level.png?raw=true)
 
 ACPI는 BIOS만 하던 전원 관리를 운영체제도 할 수 있도록 만들어진 인터페이스로, 운영체제가 필요에 따라 전력을 효율적으로 사용하도록 돕습니다.
 

@@ -1,10 +1,22 @@
 # DVFS
 
-### Dynamic Voltage Frequency Scaling
+> Definition of Dynamic Voltage Frequency Scaling
+>
+> Linux CPUFreq Framework
+>
+> Linux CPUFreq Governor
+>
+> Linux CPUFreq sysfs command
+
+
+
+## Dynamic Voltage Frequency Scaling
 
 > Dynamic Voltage Frequency Scaling is enabled by default, so the CPU frequency and voltages of a running system will adapt to the system's load. The DVFS subsystem is controlled through the **/sys/devices/system/cpu/cpu\*N\*/cpufreq/** sysfs path, where *N* corresponds to the core number:
 
 https://www.digi.com/resources/documentation/digidocs/90001546/reference/bsp/v4-1_cc6/r_power_management.htm?TocPath=Digi%20Embedded%20Yocto%7CSystem%20development%7CLinux%20Board%20Support%20Package%7CDevices%20and%20interfaces%7C_____14
+
+![img](https://ars.els-cdn.com/content/image/3-s2.0-B9780123797513500023-f00-13-9780123797513.jpg)
 
 
 
@@ -16,7 +28,7 @@ Linux 공식 문서에 CPU Performance Scaling은 Working-State Power Management
 
 
 
-### Linux CPUFreq Framework
+## Linux CPUFreq Framework
 
 Linux에서 CPU Performance Scaling은 CPUFreq (CPU Frequency scaling) 코드를 통해 이루어집니다.
 
@@ -28,7 +40,7 @@ CPUFreq는 3가지 layer로 이루어져있습니다.
 
 
 
-### Scaling governor
+## Scaling governor
 
 - performance: scaling_max_freq나 scaling_min_freq 제한이 변경될 때만 governor가 설정되며, 가장 높은 frequency로 설정됩니다.
 - powersave: 위와 반대로 lowest frequency 로 설정됩니다.
@@ -42,9 +54,9 @@ CPUFreq는 3가지 layer로 이루어져있습니다.
 
 
 
-### sysfs command
+## sysfs command
 
-cpufreq 관련 가능한 sysfs 전체
+cpufreq 관련 가능한 sysfs 명령어들은 다음과 같습니다.
 
 ```shell
 # ls /sys/devices/system/cpu/cpu0/cpufreq/
@@ -88,7 +100,7 @@ governor 선택
 
 
 
-### Kernel Build 시 Governor 선택
+## Kernel Build 시 Governor 선택
 
 Default governor is "performance". The default governor can be changed through 'menuconfig'.
 
