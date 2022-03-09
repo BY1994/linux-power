@@ -41,7 +41,7 @@
                                 <ul class="dropdown-menu">
                                     
 <li>
-    <a href="../../01_CPU/01_01_cpu_index/" class="dropdown-item">CPU 목차</a>
+    <a href="../../01_CPU/01_01_cpu_index/" class="dropdown-item">CPU</a>
 </li>
                                 </ul>
                             </li>
@@ -50,11 +50,25 @@
                                 <ul class="dropdown-menu">
                                     
 <li>
-    <a href="../03_01_dvfs_index/" class="dropdown-item">DVFS 목차</a>
+    <a href="./" class="dropdown-item active">DVFS framework</a>
 </li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Thermal <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
                                     
 <li>
-    <a href="./" class="dropdown-item active">DVFS framework</a>
+    <a href="../../04_Thermal/04_01_thermal_framework/" class="dropdown-item">Thermal framework</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Regulator <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../05_Regulator/05_01_regulator_framework/" class="dropdown-item">Regulator framework</a>
 </li>
                                 </ul>
                             </li>
@@ -70,12 +84,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../03_01_dvfs_index/" class="nav-link">
+                                <a rel="prev" href="../../01_CPU/01_01_cpu_index/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../../06_S2R/06_01_System_Sleep_States/" class="nav-link">
+                                <a rel="next" href="../../04_Thermal/04_01_thermal_framework/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -99,6 +113,26 @@
             
             <li class="nav-item" data-level="1"><a href="#dvfs" class="nav-link">DVFS</a>
               <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#dynamic-voltage-frequency-scaling" class="nav-link">Dynamic Voltage Frequency Scaling</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#linux-cpufreq-framework" class="nav-link">Linux CPUFreq Framework</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#scaling-governor" class="nav-link">Scaling governor</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#sysfs-command" class="nav-link">sysfs command</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#kernel-build-governor" class="nav-link">Kernel Build 시 Governor 선택</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
               </ul>
             </li>
         </ul>
@@ -107,15 +141,22 @@
                     <div class="col-md-9" role="main">
 
 <h1 id="dvfs">DVFS</h1>
-<h3 id="dynamic-voltage-frequency-scaling">Dynamic Voltage Frequency Scaling</h3>
+<blockquote>
+<p>Definition of Dynamic Voltage Frequency Scaling</p>
+<p>Linux CPUFreq Framework</p>
+<p>Linux CPUFreq Governor</p>
+<p>Linux CPUFreq sysfs command</p>
+</blockquote>
+<h2 id="dynamic-voltage-frequency-scaling">Dynamic Voltage Frequency Scaling</h2>
 <blockquote>
 <p>Dynamic Voltage Frequency Scaling is enabled by default, so the CPU frequency and voltages of a running system will adapt to the system's load. The DVFS subsystem is controlled through the <strong>/sys/devices/system/cpu/cpu*N*/cpufreq/</strong> sysfs path, where <em>N</em> corresponds to the core number:</p>
 </blockquote>
 <p>https://www.digi.com/resources/documentation/digidocs/90001546/reference/bsp/v4-1_cc6/r_power_management.htm?TocPath=Digi%20Embedded%20Yocto%7CSystem%20development%7CLinux%20Board%20Support%20Package%7CDevices%20and%20interfaces%7C_____14</p>
+<p><img alt="img" src="https://ars.els-cdn.com/content/image/3-s2.0-B9780123797513500023-f00-13-9780123797513.jpg" /></p>
 <p>Dynamic frequency scaling은 CPU throttling이라고도 합니다.</p>
 <p>[출처] https://en.wikipedia.org/wiki/Dynamic_frequency_scaling</p>
 <p>Linux 공식 문서에 CPU Performance Scaling은 Working-State Power Management로 분류되어있습니다.</p>
-<h3 id="linux-cpufreq-framework">Linux CPUFreq Framework</h3>
+<h2 id="linux-cpufreq-framework">Linux CPUFreq Framework</h2>
 <p>Linux에서 CPU Performance Scaling은 CPUFreq (CPU Frequency scaling) 코드를 통해 이루어집니다.</p>
 <p>CPUFreq는 3가지 layer로 이루어져있습니다.</p>
 <ul>
@@ -123,7 +164,7 @@
 <li>Scaling governor: CPU capacity를 추정하는데 사용되는 알고리즘을 실행합니다.</li>
 <li>Scaling drivers: scaling governor에게 요청받은 CPU 상태 변경을 위하여 hardware 에 접근하는 부분입니다.</li>
 </ul>
-<h3 id="scaling-governor">Scaling governor</h3>
+<h2 id="scaling-governor">Scaling governor</h2>
 <ul>
 <li>performance: scaling_max_freq나 scaling_min_freq 제한이 변경될 때만 governor가 설정되며, 가장 높은 frequency로 설정됩니다.</li>
 <li>powersave: 위와 반대로 lowest frequency 로 설정됩니다.</li>
@@ -137,8 +178,8 @@
 <li>conservative: 이것도 ondemand governor 처럼 CPU load를 계산합니다. 그러나 이것은 threshold를 넘었는지 안 넘었는지에 따라 상대적으로 조금씩 frequency를 변화시킵니다.</li>
 </ul>
 <p>[출처] https://www.kernel.org/doc/html/v4.14/admin-guide/pm/cpufreq.html</p>
-<h3 id="sysfs-command">sysfs command</h3>
-<p>cpufreq 관련 가능한 sysfs 전체</p>
+<h2 id="sysfs-command">sysfs command</h2>
+<p>cpufreq 관련 가능한 sysfs 명령어들은 다음과 같습니다.</p>
 <pre><code class="language-shell"># ls /sys/devices/system/cpu/cpu0/cpufreq/
 affected_cpus                  related_cpus                   scaling_governor
 cpuinfo_cur_freq               scaling_available_frequencies  scaling_max_freq
@@ -163,7 +204,7 @@ ondemand userspace interactive performance
 </code></pre>
 <p>[출처] https://www.digi.com/resources/documentation/digidocs/90001546/reference/bsp/v4-1_cc6/r_power_management.htm?TocPath=Digi%20Embedded%20Yocto%7CSystem%20development%7CLinux%20Board%20Support%20Package%7CDevices%20and%20interfaces%7C_____14</p>
 <p>[출처] https://community.arm.com/developer/tools-software/oss-platforms/w/docs/528/cpufreq-dvfs</p>
-<h3 id="kernel-build-governor">Kernel Build 시 Governor 선택</h3>
+<h2 id="kernel-build-governor">Kernel Build 시 Governor 선택</h2>
 <p>Default governor is "performance". The default governor can be changed through 'menuconfig'.</p>
 <p>Multiple governors can be built and exist in the kernel by selecting them through "menuconfig".</p>
 <pre><code>Select the governors you want to build in to kernel.
