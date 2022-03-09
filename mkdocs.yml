@@ -2,12 +2,8 @@ site_name: Linux CPU and Power
 
 pages:
   - 홈: index.md
-  - CPU:
-    - 'CPU' : '01_CPU/01_01_cpu_index.md'
-  - DVFS:
-    - 'DVFS framework' : '03_DVFS/03_01_dvfs_driver.md'
-  - Thermal:
-    - 'Thermal framework' : '04_Thermal/04_01_thermal_framework.md'
-  - Regulator:
-    - 'Regulator framework' : '05_Regulator/05_01_regulator_framework.md'
+  - 'CPU': '01_CPU/01_01_cpu_index.md'
+  - 'DVFS': '03_DVFS/03_01_dvfs_driver.md'
+  - 'Thermal': '04_Thermal/04_01_thermal_framework.md'
+  - 'Regulator': '05_Regulator/05_01_regulator_framework.md'
   - 'Supend To RAM' :  '06_S2R/06_01_System_Sleep_States.md'

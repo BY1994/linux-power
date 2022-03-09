@@ -2,7 +2,9 @@
 
 ## Thermal Framework Overview
 
-![img](https://img2018.cnblogs.com/blog/1083701/201907/1083701-20190723140315607-2127296028.png)
+![04_thermal_01](../assets/04_thermal_01.png)
+
+https://www.cnblogs.com/arnoldlu/p/11207142.html
 
 
 
