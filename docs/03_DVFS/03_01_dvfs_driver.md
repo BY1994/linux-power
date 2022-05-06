@@ -123,6 +123,14 @@ Select the governors you want to build in to kernel.
 
 
 
+![Sensors 18 03068 g007 550](https://www.mdpi.com/sensors/sensors-18-03068/article_deploy/html/images/sensors-18-03068-g007-550.jpg)
+
+The infrastructure of CPUfreq
+
+[출처] https://www.mdpi.com/1424-8220/18/9/3068/htm
+
+
+
 ### Voltage Scaling
 
 > The voltage layer consists of the information of all voltage domains in the system and configures all vdds during voltage layer initialization. When a vdd is configured a regulator supply handle is acquired and stored in the corresponding vdd structure.The regulators scale/set voltage function is plugged in to the vdd's voltage scale function pointer. Thus when a voltage change is requested forwarded to a vdd. The voltage layer requests the regulator framework to change the device voltage to the target voltage. Regluator driver verifies if the target voltage is in with in the limits of the voltage domain and regulator supply constraints. If all the checks go through then regulator changes the voltage of the requested device to the target voltage.
@@ -146,3 +154,30 @@ Linux 공식문서에서 나오는 CPU라는 용어는 logical CPU를 의미합�
 ### cf) PM QoS
 
 https://events.static.linuxfound.org/images/stories/pdf/lcjp2012_ham.pdf
+
+
+
+cpufreq 에 대한 전반적 설명 참고
+
+https://linux-sunxi.org/Cpufreq
+
+
+
+CPUfreq benchmark 결과
+
+![E-2276g-3.10-kernel-cpufreq-all](https://community.centminmod.com/media/e-2276g-3-10-kernel-cpufreq-all.44/full?d=1572817500)
+
+[출처] https://community.centminmod.com/media/e-2276g-3-10-kernel-cpufreq-all.44/
+
+
+
+Temperature 그래프
+
+![Cpufreq experiment temperatures.png](https://linux-sunxi.org/images/e/e6/Cpufreq_experiment_temperatures.png)
+
+Current 그래프
+
+![Cpufreq experiment consumption.png](https://linux-sunxi.org/images/2/20/Cpufreq_experiment_consumption.png)
+
+[출처] https://linux-sunxi.org/Cpufreq
+
