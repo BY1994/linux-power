@@ -25,10 +25,33 @@ ACPI 공식 문서: https://uefi.org/sites/default/files/resources/ACPI_5_1relea
 
 ACPI는 BIOS만 하던 전원 관리를 운영체제도 할 수 있도록 만들어진 인터페이스로, 운영체제가 필요에 따라 전력을 효율적으로 사용하도록 돕습니다.
 
+> Purpose of ACPI: designed to allow the operating system to control the amount of power provided to each device or peripheral attached to the computer system.
+
+[참고] https://kb.iu.edu/d/ahvl
+
 
 
 S3 에 해당하는 것이 Suspend To RAM입니다. 램의 내용을 최대한 보존하고 나머지 장치 대부분의 전원은 차단합니다.
 
 
 
+| ACPI Sleeping States | Linux Sleep States            | Description                                                  |
+| -------------------- | ----------------------------- | ------------------------------------------------------------ |
+| S1                   | Standby                       | 컴퓨터가 켜진 상태에서 디스크와 모니터 입출력 장치 전원 차단 |
+| S2                   | -                             | CPU 전원 차단, 램 갱신 정상적                                |
+| S3                   | Suspend To RAM                | 램의 내용을 보존하고 나머지 장치 대부분 전원 차단            |
+| S4                   | Suspend To Disk (Hibernation) | 램의 내용을 하드디스크에 저장한 뒤 시스템 전원 완전 차단     |
+
+ACPI level 에 대응되는 Linux (v5.0) Sleep states
+
+
+
 Linux Kernel에서는 Suspend To RAM 을 할 수 있도록 framework에서 지원합니다. 
+
+
+
+Reference
+
+[ARM Open Source Software and Platforms - System Suspend To RAM](https://community.arm.com/oss-platforms/w/docs/526/system-suspend-to-ram)
+
+[What Is Suspend-to-Idle and How To Make It Work](https://events.static.linuxfound.org/sites/events/files/slides/what-is-suspend-to-idle.pdf)
