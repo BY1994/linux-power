@@ -48,8 +48,22 @@ Dynamic Power Management 방법 (Hardware + Software)
 
 https://www.sciencedirect.com/topics/computer-science/dynamic-power-management-technique
 
+![dynamic power reduction](https://vlsi-backend-adventure.com/images/pdanalysis/reduction.JPG)
+
+https://vlsi-backend-adventure.com/power_analysis.html
+
 
 
 ### Github.io page
 
 https://by1994.github.io/linux-power/
+
+
+
+
+
+Reference
+
+[NVIDIA Jetson Linux Developer Guide - Power Management](https://docs.nvidia.com/jetson/archives/r34.1/DeveloperGuide/index.html#page/Tegra%20Linux%20Driver%20Package%20Development%20Guide/power_management_jetson_xavier.html)
+
+[Debugging Embedded Linux (Kernel) Power Management](https://www.cnx-software.com/2013/01/17/debugging-embedded-linux-kernel-power-management-elce-2012/)
