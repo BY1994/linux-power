@@ -12,11 +12,11 @@
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
 
         <script src="../../js/jquery-1.10.2.min.js" defer></script>
         <script src="../../js/bootstrap.min.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
         <script>hljs.initHighlightingOnLoad();</script> 
     </head>
 
@@ -97,6 +97,10 @@
               <ul class="nav flex-column">
               </ul>
             </li>
+            <li class="nav-item" data-level="2"><a href="#governor" class="nav-link">Governor</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
             <li class="nav-item" data-level="2"><a href="#sysfs" class="nav-link">sysfs</a>
               <ul class="nav flex-column">
               </ul>
@@ -114,10 +118,275 @@
 <p>https://www.cnblogs.com/arnoldlu/p/11207142.html</p>
 <h2 id="throttling-and-tripping">Throttling and Tripping</h2>
 <p><img alt="220303_Thermal_Management.jpg" src="https://github.com/BY1994/TIL/blob/main/Daily/2022/images/220303_Thermal_Management.jpg?raw=true" /></p>
+<h2 id="governor">Governor</h2>
+<ul>
+<li>gov_bang_bang</li>
+<li>gov_power_allocator</li>
+<li>gov_user_space</li>
+<li>gov_fair_share</li>
+<li>gov_step_wise</li>
+</ul>
+<p>Linaro Presentation: https://static.linaro.org/connect/san19/presentations/san19-101.pdf</p>
+<p>Power Allocator Governor</p>
+<p>PID 제어 알고리즘을 활용하여, 원하는 온도가 될 때까지 정해진 power budget (배터리 용량) 내에서 power allocation 을 조정하는 것이다.</p>
+<blockquote>
+<p>P_max = k_p * e + k_i * err_integral + k_d * diff_err + sustainable_power</p>
+</blockquote>
+<p>목표치가 100일 때, 현재 온도가 110도라면 overshoot 상태이고, P를 -10*k_po 로 계산하고, 현재 온도가 30도라면 undershoot로 70*k_pu 로 계산한다. (최종 결과는 PID 값 다 넣고 sustainable power 까지 합산한 결과)</p>
+<pre><code class="language-text">                                    k_d
+                                     |
+current_temp                         |
+     |                               v
+     |              +----------+   +---+
+     |       +-----&gt;| diff_err |--&gt;| X |------+
+     |       |      +----------+   +---+      |
+     |       |                                |      tdp        actor
+     |       |                      k_i       |       |  get_requested_power()
+     |       |                       |        |       |        |     |
+     |       |                       |        |       |        |     | ...
+     v       |                       v        v       v        v     v
+   +---+     |      +-------+      +---+    +---+   +---+   +----------+
+   | S |-----+-----&gt;| sum e |-----&gt;| X |---&gt;| S |--&gt;| S |--&gt;|power     |
+   +---+     |      +-------+      +---+    +---+   +---+   |allocation|
+     ^       |                                ^             +----------+
+     |       |                                |                |     |
+     |       |        +---+                   |                |     |
+     |       +-------&gt;| X |-------------------+                v     v
+     |                +---+                               granted performance
+desired_temperature     ^
+                        |
+                        |
+                    k_po/k_pu
+</code></pre>
+<p>https://www.kernel.org/doc/html/v5.7/driver-api/thermal/power_allocator.html</p>
+<p>v5.9.11 linux</p>
+<p>drivers/thermal/gov_power_allocator.c</p>
+<pre><code class="language-c">static int power_allocator_throttle(struct thermal_zone_device *tz, int trip)
+{
+        int ret;
+        int switch_on_temp, control_temp;
+        struct power_allocator_params *params = tz-&gt;governor_data;
+
+        /*
+         * We get called for every trip point but we only need to do
+         * our calculations once
+         */
+        if (trip != params-&gt;trip_max_desired_temperature)
+                return 0;
+
+        ret = tz-&gt;ops-&gt;get_trip_temp(tz, params-&gt;trip_switch_on,
+                                     &amp;switch_on_temp);
+        if (!ret &amp;&amp; (tz-&gt;temperature &lt; switch_on_temp)) {
+                tz-&gt;passive = 0;
+                reset_pid_controller(params);
+                allow_maximum_power(tz);
+                return 0;
+        }
+
+        tz-&gt;passive = 1;
+
+        ret = tz-&gt;ops-&gt;get_trip_temp(tz, params-&gt;trip_max_desired_temperature,
+                                &amp;control_temp);
+        if (ret) {
+                dev_warn(&amp;tz-&gt;device,
+                         &quot;Failed to get the maximum desired temperature: %d\n&quot;,
+                         ret);
+                return ret;
+        }
+
+        return allocate_power(tz, control_temp);
+}
+</code></pre>
+<p>switch_on_temp 는 해당 governor 가 동작하기 시작하는 기준 온도이다. (항상 동작하면 PID 계산식에 error 값이 계속 누적되기 때문에 굉장히 느리게 원하는 온도에 도달하게 된다.) 혹은 governor가 동작 중에 해당 기준 온도보다 낮아지면 동작을 멈추는 것뿐만 아니라 그동안 계산하던 PID 식도 reset 한다.</p>
+<pre><code class="language-c">        ret = tz-&gt;ops-&gt;get_trip_temp(tz, params-&gt;trip_switch_on,
+                                     &amp;switch_on_temp);
+        if (!ret &amp;&amp; (tz-&gt;temperature &lt; switch_on_temp)) {
+                tz-&gt;passive = 0;
+                reset_pid_controller(params);
+                allow_maximum_power(tz);
+                return 0;
+        }
+</code></pre>
+<p>기준 온도를 넘어서면 유지하고 싶은 온도 (desired temperature) 을 맞출 수 있도록 power 를 할당한다.</p>
+<pre><code class="language-c">        ret = tz-&gt;ops-&gt;get_trip_temp(tz, params-&gt;trip_max_desired_temperature,
+                                &amp;control_temp);
+        if (ret) {
+                dev_warn(&amp;tz-&gt;device,
+                         &quot;Failed to get the maximum desired temperature: %d\n&quot;,
+                         ret);
+                return ret;
+        }
+
+        return allocate_power(tz, control_temp);
+</code></pre>
+<p>allocate_power 함수에서는 할당 가능한 power 를 계산한다.</p>
+<pre><code class="language-c">                if (cdev-&gt;ops-&gt;get_requested_power(cdev, tz, &amp;req_power[i]))
+                        continue;
+
+                if (!total_weight)
+                        weight = 1 &lt;&lt; FRAC_BITS;
+                else
+                        weight = instance-&gt;weight;
+
+                weighted_req_power[i] = frac_to_int(weight * req_power[i]);
+
+                if (power_actor_get_max_power(cdev, tz, &amp;max_power[i]))
+                        continue;
+
+                total_req_power += req_power[i];
+                max_allocatable_power += max_power[i];
+                total_weighted_req_power += weighted_req_power[i];
+
+                i++;
+</code></pre>
+<p>그리고 이 계산된 power 값을 적용한다.</p>
+<pre><code class="language-c">        list_for_each_entry(instance, &amp;tz-&gt;thermal_instances, tz_node) {
+                if (instance-&gt;trip != trip_max_desired_temperature)
+                        continue;
+
+                if (!cdev_is_power_actor(instance-&gt;cdev))
+                        continue;
+
+                power_actor_set_power(instance-&gt;cdev, instance,
+                                      granted_power[i]);
+                total_granted_power += granted_power[i];
+
+                i++;
+        }
+</code></pre>
+<p>drivers/thermal/cpufreq_cooling.c</p>
+<pre><code class="language-c">        for_each_cpu(cpu, policy-&gt;related_cpus) {
+                u32 load;
+
+                if (cpu_online(cpu))
+                        load = get_load(cpufreq_cdev, cpu, i);
+                else
+                        load = 0;
+
+                total_load += load;
+                if (load_cpu)
+                        load_cpu[i] = load;
+
+                i++;
+        }
+
+        cpufreq_cdev-&gt;last_load = total_load;
+
+        *power = get_dynamic_power(cpufreq_cdev, freq);
+</code></pre>
+<pre><code class="language-c">static u32 get_dynamic_power(struct cpufreq_cooling_device *cpufreq_cdev,
+                             unsigned long freq)
+{
+        u32 raw_cpu_power;
+
+        raw_cpu_power = cpu_freq_to_power(cpufreq_cdev, freq);
+        return (raw_cpu_power * cpufreq_cdev-&gt;last_load) / 100;
+}
+</code></pre>
+<p>power 를 계산할 때는 cpu load 를 고려하여 계산한다.</p>
+<p>drivers/thermal/thermal_core.c</p>
+<pre><code class="language-c">int power_actor_set_power(struct thermal_cooling_device *cdev,
+                          struct thermal_instance *instance, u32 power)
+{
+        unsigned long state;
+        int ret;
+
+        if (!cdev_is_power_actor(cdev))
+                return -EINVAL;
+
+        ret = cdev-&gt;ops-&gt;power2state(cdev, instance-&gt;tz, power, &amp;state);
+        if (ret)
+                return ret;
+
+        instance-&gt;target = state;
+        mutex_lock(&amp;cdev-&gt;lock);
+        cdev-&gt;updated = false;
+        mutex_unlock(&amp;cdev-&gt;lock);
+        thermal_cdev_update(cdev);
+
+        return 0;
+}
+</code></pre>
+<p>그리고 power2state 함수를 호출하여 power 를 설정한다.</p>
+<p>drivers/thermal/cpufreq_cooling.c</p>
+<pre><code class="language-c">// cpufreq_power2state
+static int cpufreq_power2state(struct thermal_cooling_device *cdev,
+                               struct thermal_zone_device *tz, u32 power,
+                               unsigned long *state)
+{
+        unsigned int target_freq;
+        u32 last_load, normalised_power;
+        struct cpufreq_cooling_device *cpufreq_cdev = cdev-&gt;devdata;
+        struct cpufreq_policy *policy = cpufreq_cdev-&gt;policy;
+
+        last_load = cpufreq_cdev-&gt;last_load ?: 1;
+        normalised_power = (power * 100) / last_load;
+        target_freq = cpu_power_to_freq(cpufreq_cdev, normalised_power);
+
+        *state = get_level(cpufreq_cdev, target_freq);
+        trace_thermal_power_cpu_limit(policy-&gt;related_cpus, target_freq, *state,
+                                      power);
+        return 0;
+}
+
+// cpu_power_to_freq
+static u32 cpu_power_to_freq(struct cpufreq_cooling_device *cpufreq_cdev,
+                             u32 power)
+{
+        int i;
+
+        for (i = cpufreq_cdev-&gt;max_level; i &gt;= 0; i--) {
+                if (power &gt;= cpufreq_cdev-&gt;em-&gt;table[i].power)
+                        break;
+        }
+
+        return cpufreq_cdev-&gt;em-&gt;table[i].frequency;
+}
+</code></pre>
+<p>sustainable_power 는 device tree 에 다음과 같이 sustainable-power 노드로 선언한다.</p>
+<p>arch/arm64/boot/dts/mediatek/mt8173.dtsi</p>
+<pre><code class="language-c">        thermal-zones {
+                cpu_thermal: cpu_thermal {
+                        polling-delay-passive = &lt;1000&gt;; /* milliseconds */
+                        polling-delay = &lt;1000&gt;; /* milliseconds */
+
+                        thermal-sensors = &lt;&amp;thermal&gt;;
+                        sustainable-power = &lt;1500&gt;; /* milliwatts */
+
+                        trips {
+                                threshold: trip-point0 {
+                                        temperature = &lt;68000&gt;;
+                                        hysteresis = &lt;2000&gt;;
+                                        type = &quot;passive&quot;;
+                                };
+
+                                target: trip-point1 {
+                                        temperature = &lt;85000&gt;;
+                                        hysteresis = &lt;2000&gt;;
+                                        type = &quot;passive&quot;;
+                                };
+
+                                cpu_crit: cpu_crit0 {
+                                        temperature = &lt;115000&gt;;
+                                        hysteresis = &lt;2000&gt;;
+                                        type = &quot;critical&quot;;
+                                };
+                        };
+
+</code></pre>
+<p>smooth 하게 조정할 수 있고, 원하는 온도로 도달할 수 있다는 장점이 있다.</p>
 <h2 id="sysfs">sysfs</h2>
 <p>현재 온도 확인</p>
 <pre><code class="language-shell">$ cat /sys/class/thermal/thermal_zone0/temp
-</code></pre></div>
+</code></pre>
+<p>Reference</p>
+<p><a href="https://www.kernel.org/doc/html/latest/driver-api/thermal/index.html">Linux kernel documentation - Thermal</a></p>
+<p><a href="https://dongka.github.io/2018/06/25/thermal/thermal_framework/">Thermal Framework</a></p>
+<p>https://www.linaro.org/blog/thermal-notifications-with-netlink/</p>
+<p>https://www.cnblogs.com/hellokitty2/p/15600099.html</p>
+<p>https://blog.csdn.net/weixin_40237571/article/details/111953849</p>
+<p>https://www.kernel.org/doc/html/v5.7/driver-api/thermal/cpu-idle-cooling.html</p>
+<p><a href="https://www.kernel.org/doc/html/latest/power/powercap/dtpm.html">DTPM - Dynamic Thermal Power Management</a></p></div>
             </div>
         </div>
 
@@ -140,16 +409,13 @@
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
             </div>
             <div class="modal-body">
-                <p>
-                    From here you can search these documents. Enter
-                    your search terms below.
-                </p>
+                <p>From here you can search these documents. Enter your search terms below.</p>
                 <form>
                     <div class="form-group">
                         <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
                     </div>
                 </form>
-                <div id="mkdocs-search-results"></div>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
             </div>
             <div class="modal-footer">
             </div>

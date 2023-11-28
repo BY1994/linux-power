@@ -12,11 +12,11 @@
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
 
         <script src="../../js/jquery-1.10.2.min.js" defer></script>
         <script src="../../js/bootstrap.min.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
         <script>hljs.initHighlightingOnLoad();</script> 
     </head>
 
@@ -194,6 +194,9 @@ ondemand userspace interactive performance
 </code></pre>
 <p><strong>[출처]</strong> <a href="http://blog.naver.com/framkang/220393909546">DVFS (Dynamic Voltage and Frequency scaling) Disabler</a>|<strong>작성자</strong> <a href="http://blog.naver.com/framkang">에프램 EFRAM</a></p>
 <p>[출처] https://wiki.somlabs.com/index.php/How_to_scale_CPU_frequency_with_DVFS_framework</p>
+<p><img alt="Sensors 18 03068 g007 550" src="https://www.mdpi.com/sensors/sensors-18-03068/article_deploy/html/images/sensors-18-03068-g007-550.jpg" /></p>
+<p>The infrastructure of CPUfreq</p>
+<p>[출처] https://www.mdpi.com/1424-8220/18/9/3068/htm</p>
 <h3 id="voltage-scaling">Voltage Scaling</h3>
 <blockquote>
 <p>The voltage layer consists of the information of all voltage domains in the system and configures all vdds during voltage layer initialization. When a vdd is configured a regulator supply handle is acquired and stored in the corresponding vdd structure.The regulators scale/set voltage function is plugged in to the vdd's voltage scale function pointer. Thus when a voltage change is requested forwarded to a vdd. The voltage layer requests the regulator framework to change the device voltage to the target voltage. Regluator driver verifies if the target voltage is in with in the limits of the voltage domain and regulator supply constraints. If all the checks go through then regulator changes the voltage of the requested device to the target voltage.</p>
@@ -207,7 +210,21 @@ ondemand userspace interactive performance
 </blockquote>
 <h3 id="cf-devfreq">cf) DEVFREQ</h3>
 <h3 id="cf-pm-qos">cf) PM QoS</h3>
-<p>https://events.static.linuxfound.org/images/stories/pdf/lcjp2012_ham.pdf</p></div>
+<p>https://events.static.linuxfound.org/images/stories/pdf/lcjp2012_ham.pdf</p>
+<p>cpufreq 에 대한 전반적 설명 참고</p>
+<p>https://linux-sunxi.org/Cpufreq</p>
+<p>CPUfreq benchmark 결과</p>
+<p><img alt="E-2276g-3.10-kernel-cpufreq-all" src="https://community.centminmod.com/media/e-2276g-3-10-kernel-cpufreq-all.44/full?d=1572817500" /></p>
+<p>[출처] https://community.centminmod.com/media/e-2276g-3-10-kernel-cpufreq-all.44/</p>
+<p>Temperature 그래프</p>
+<p><img alt="Cpufreq experiment temperatures.png" src="https://linux-sunxi.org/images/e/e6/Cpufreq_experiment_temperatures.png" /></p>
+<p>Current 그래프</p>
+<p><img alt="Cpufreq experiment consumption.png" src="https://linux-sunxi.org/images/2/20/Cpufreq_experiment_consumption.png" /></p>
+<p>[출처] https://linux-sunxi.org/Cpufreq</p>
+<p>DVS 와 DPM 을 나눠서 설명하기도 함</p>
+<p>https://dl.acm.org/doi/abs/10.1145/1450058.1450073</p>
+<p>Reference</p>
+<p><a href="https://lenovopress.lenovo.com/lp1596-using-the-power-management-features-of-the-xen-kernel">Using the Power Management Features of the Xen Kernel on Lenovo ThinkSystem Servers</a></p></div>
             </div>
         </div>
 
@@ -230,16 +247,13 @@ ondemand userspace interactive performance
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
             </div>
             <div class="modal-body">
-                <p>
-                    From here you can search these documents. Enter
-                    your search terms below.
-                </p>
+                <p>From here you can search these documents. Enter your search terms below.</p>
                 <form>
                     <div class="form-group">
                         <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
                     </div>
                 </form>
-                <div id="mkdocs-search-results"></div>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
             </div>
             <div class="modal-footer">
             </div>
