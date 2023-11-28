@@ -48,6 +48,14 @@ ACPI level 에 대응되는 Linux (v5.0) Sleep states
 
 Linux Kernel에서는 Suspend To RAM 을 할 수 있도록 framework에서 지원합니다. 
 
+![img](https://blog.kakaocdn.net/dn/47qOL/btstbcFu0iZ/ryXt0OVj3QApKNfelXu8A0/img.png)
+
+[참고] http://events17.linuxfoundation.org/sites/events/files/slides/linux_suspend.pdf
+
+![img](https://blog.kakaocdn.net/dn/BRXJJ/btstcNMjzvV/HoljKKebNbIK8jEEPzfDJk/img.png)
+
+[참고] http://www.wowotech.net/pm_subsystem/suspend_and_resume.html
+
 
 
 Reference

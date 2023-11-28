@@ -36,6 +36,14 @@ https://www.cnx-software.com/2013/01/17/debugging-embedded-linux-kernel-power-ma
 
 
 
+SMP
+
+
+
+PSCI
+
+
+
 Reference
 
 [Zynq UltraScale + MPSoC Developer Guide - PSCI](https://docs.xilinx.com/r/2021.1-English/ug1137-zynq-ultrascale-mpsoc-swdev/Power-State-Coordination-Interface-PSCI)

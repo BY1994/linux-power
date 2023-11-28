@@ -181,3 +181,14 @@ Current 그래프
 
 [출처] https://linux-sunxi.org/Cpufreq
 
+
+
+DVS 와 DPM 을 나눠서 설명하기도 함
+
+https://dl.acm.org/doi/abs/10.1145/1450058.1450073
+
+
+
+Reference
+
+[Using the Power Management Features of the Xen Kernel on Lenovo ThinkSystem Servers](https://lenovopress.lenovo.com/lp1596-using-the-power-management-features-of-the-xen-kernel)
