@@ -1,6 +1,6 @@
 site_name: Linux CPU and Power
 
-pages:
+nav:
   - 홈: index.md
   - 'CPU': '01_CPU/01_01_cpu_index.md'
   - 'DVFS': '03_DVFS/03_01_dvfs_driver.md'
